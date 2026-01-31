@@ -42,7 +42,22 @@ export const ComparePreview = memo(
 
 		return (
 			<div className="ComparePreview flex-1 space-y-2 max-sm:-ml-2 max-sm:-mr-2">
-				<div className="relative pb-6 border border-border">
+				<div className="relative">
+					<div className="pointer-events-none absolute z-30 inset-2 flex items-start justify-between text-xs md:text-s text-muted-foreground">
+						<SimpleButton
+							onClick={() => openModal("original")}
+							className="pointer-events-auto shadow-md/50"
+						>
+							Original
+						</SimpleButton>
+						<SimpleButton
+							onClick={() => openModal("converted")}
+							disabled={!convertedUrl}
+							className="pointer-events-auto shadow-md/50"
+						>
+							Converted
+						</SimpleButton>
+					</div>
 					<div className="relative flex aspect-square lg:aspect-video items-center justify-center bg-surface u-checkboard">
 						<img
 							src={convertedUrl ?? originalUrl}
@@ -62,25 +77,9 @@ export const ComparePreview = memo(
 						) : null}
 
 						<div
-							className="h-full border-l border-l-foreground/70 border-r border-r-background/70 opacity-50 w-px absolute top-0 bottom-0 translate-x-1/2 transition-transform"
+							className="h-full border-2 border-t-0 border-b-0 border-l-foreground border-r-background opacity-50 w-px absolute top-0 bottom-0 translate-x-1/2 transition-transform"
 							style={{ left: `${compareSplit}%` }}
 						/>
-
-						<div className="pointer-events-none absolute inset-2 flex items-start justify-between text-xs md:text-s text-muted-foreground">
-							<SimpleButton
-								onClick={() => openModal("original")}
-								className="pointer-events-auto shadow-md/50"
-							>
-								Original
-							</SimpleButton>
-							<SimpleButton
-								onClick={() => openModal("converted")}
-								disabled={!convertedUrl}
-								className="pointer-events-auto shadow-md/50"
-							>
-								Converted
-							</SimpleButton>
-						</div>
 					</div>
 					<input
 						type="range"
@@ -88,7 +87,7 @@ export const ComparePreview = memo(
 						max={100}
 						value={compareSplit}
 						onChange={onSplitChange}
-						className="absolute bottom-2 h-2 w-full"
+						className="absolute inset-0 opacity-0 cursor-ew-resize"
 					/>
 				</div>
 
