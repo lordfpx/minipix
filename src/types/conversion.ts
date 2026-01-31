@@ -1,4 +1,5 @@
 import type {
+	BoostSettings,
 	GifConversionOptions,
 	OutputFormat,
 	PngConversionOptions,
@@ -18,10 +19,12 @@ export interface ConversionItem {
 	usesGlobalFormat: boolean;
 	gifOptions: GifConversionOptions;
 	pngOptions: PngConversionOptions;
+	boost: BoostSettings;
 	error?: string;
 	compareSplit: number;
 	width?: number;
 	height?: number;
+	isHdr?: boolean;
 	version: number;
 }
 
@@ -59,4 +62,11 @@ export const createDefaultPngOptions = (): PngConversionOptions => ({
 	preserveAlpha: true,
 	backgroundColor: "#ffffff",
 	interlaced: false,
+});
+
+export const createDefaultBoost = (): BoostSettings => ({
+	exposure: 0,
+	saturation: 1,
+	contrast: 1,
+	brightness: 0,
 });

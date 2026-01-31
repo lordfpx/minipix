@@ -8,6 +8,7 @@ import { SimpleBlock } from "@/components/ui/SimpleBlock";
 import { SimpleButton } from "@/components/ui/SimpleButton";
 import { SimpleTitle } from "@/components/ui/SimpleTitle";
 import type {
+	BoostSettings,
 	GifConversionOptions,
 	OutputFormat,
 	PngConversionOptions,
@@ -22,6 +23,7 @@ interface ConversionItemProps {
 	onUseGlobalSettingsChange: (id: string, useGlobal: boolean) => void;
 	onGifOptionsChange: (id: string, options: Partial<GifConversionOptions>) => void;
 	onPngOptionsChange: (id: string, options: Partial<PngConversionOptions>) => void;
+	onBoostChange: (id: string, options: Partial<BoostSettings>) => void;
 	onSplitChange: (id: string, value: number) => void;
 	onRemove: (id: string) => void;
 }
@@ -36,6 +38,7 @@ const ConversionItemComponent = ({
 	onUseGlobalSettingsChange,
 	onGifOptionsChange,
 	onPngOptionsChange,
+	onBoostChange,
 	onSplitChange,
 	onRemove,
 }: ConversionItemProps) => {
@@ -126,6 +129,11 @@ const ConversionItemComponent = ({
 		[item.id, onPngOptionsChange],
 	);
 
+	const updateBoost = useCallback(
+		(options: Partial<BoostSettings>) => onBoostChange(item.id, options),
+		[item.id, onBoostChange],
+	);
+
 	const handleSplitSlider = useCallback(
 		(event: ChangeEvent<HTMLInputElement>) => onSplitChange(item.id, Number(event.target.value)),
 		[item.id, onSplitChange],
@@ -150,7 +158,14 @@ const ConversionItemComponent = ({
 		<SimpleBlock className="ConversionItem space-y-4">
 			<div className="mx-auto max-w-6xl flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 				<div className="space-y-1 flex gap-2 items-start w-full">
-					<SimpleTitle as="h3">{item.file.name}</SimpleTitle>
+					<div className="flex items-center gap-2">
+						<SimpleTitle as="h3">{item.file.name}</SimpleTitle>
+						{item.isHdr ? (
+							<span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+								HDR
+							</span>
+						) : null}
+					</div>
 
 					<div className="ml-auto flex gap-2">
 						<SimpleButton
@@ -191,10 +206,12 @@ const ConversionItemComponent = ({
 						qualityDisabled={qualityDisabled}
 						gifOptions={item.gifOptions}
 						pngOptions={item.pngOptions}
+						boost={item.boost}
 						settingsDisabled={settingsDisabled}
 						onQualityChange={handleQualityInputChange}
 						onGifOptionsChange={updateGifOptions}
 						onPngOptionsChange={updatePngOptions}
+						onBoostChange={updateBoost}
 					/>
 				</div>
 

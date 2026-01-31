@@ -48,7 +48,7 @@ export const ComparePreview = memo(
 							src={convertedUrl ?? originalUrl}
 							alt={convertedUrl ? "Converted" : "Original"}
 							loading="lazy"
-							className="h-full w-full object-contain pixelated"
+							className="h-full w-full object-contain pixelated pointer-events-none"
 						/>
 
 						{convertedUrl ? (
@@ -56,7 +56,7 @@ export const ComparePreview = memo(
 								src={originalUrl}
 								alt="Original"
 								loading="lazy"
-								className="absolute inset-0 h-full w-full object-contain pixelated"
+								className="absolute inset-0 h-full w-full object-contain pixelated pointer-events-none"
 								style={{ clipPath: `inset(0 ${100 - compareSplit}% 0 0)` }}
 							/>
 						) : null}

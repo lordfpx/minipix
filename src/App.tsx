@@ -27,6 +27,7 @@ const App = () => {
 		handleUseGlobalSettingsChange,
 		handleGifOptionsChange,
 		handlePngOptionsChange,
+		handleBoostChange,
 		handleGlobalQualityChange,
 		handleGlobalFormatChange,
 		handleGlobalGifOptionsChange,
@@ -101,6 +102,7 @@ const App = () => {
 						onUseGlobalSettingsChange={handleUseGlobalSettingsChange}
 						onGifOptionsChange={handleGifOptionsChange}
 						onPngOptionsChange={handlePngOptionsChange}
+						onBoostChange={handleBoostChange}
 						onSplitChange={handleSplitChange}
 						onRemove={removeItem}
 					/>

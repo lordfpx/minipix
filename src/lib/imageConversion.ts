@@ -29,6 +29,17 @@ export type ConversionConfig =
 	| { format: "png"; options: PngConversionOptions }
 	| { format: "gif"; options: GifConversionOptions };
 
+export interface BoostSettings {
+	exposure: number;
+	saturation: number;
+	contrast: number;
+	brightness: number;
+}
+
+interface ConvertImageOptions {
+	boost?: BoostSettings;
+}
+
 export interface ConversionResult {
 	blob: Blob;
 	url: string;
@@ -54,8 +65,68 @@ const supportedInputMimeTypes = [
 const supportedInputExtensions = new Set(["jpeg", "jpg", "png", "gif", "webp", "svg", "ico"]);
 
 const qualityToFloat = (quality: number) => {
-	return Math.min(1, Math.max(0.05, quality / 100));
+	return Math.min(1, Math.max(0, quality / 100));
 };
+
+const clampByte = (value: number) => Math.min(255, Math.max(0, value));
+const defaultBoost: BoostSettings = {
+	exposure: 0,
+	saturation: 1,
+	contrast: 1,
+	brightness: 0,
+};
+
+const applyBoost = (
+	ctx: CanvasRenderingContext2D,
+	width: number,
+	height: number,
+	boost: BoostSettings = defaultBoost,
+) => {
+	const imageData = ctx.getImageData(0, 0, width, height);
+	const data = imageData.data;
+	const exposureFactor = 2 ** boost.exposure;
+	const saturation = boost.saturation;
+	const contrast = boost.contrast;
+	const brightness = boost.brightness;
+	for (let i = 0; i < data.length; i += 4) {
+		let r = data[i] * exposureFactor;
+		let g = data[i + 1] * exposureFactor;
+		let b = data[i + 2] * exposureFactor;
+
+		const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+		r = lum + (r - lum) * saturation;
+		g = lum + (g - lum) * saturation;
+		b = lum + (b - lum) * saturation;
+
+		r = (r - 128) * contrast + 128 + brightness;
+		g = (g - 128) * contrast + 128 + brightness;
+		b = (b - 128) * contrast + 128 + brightness;
+
+		data[i] = clampByte(r);
+		data[i + 1] = clampByte(g);
+		data[i + 2] = clampByte(b);
+	}
+	ctx.putImageData(imageData, 0, 0);
+};
+
+const encodeCanvas = (
+	canvas: HTMLCanvasElement,
+	mimeType: string,
+	quality?: number,
+): Promise<Blob> =>
+	new Promise((resolve, reject) => {
+		canvas.toBlob(
+			(result) => {
+				if (result) {
+					resolve(result);
+				} else {
+					reject(new Error("Conversion failed."));
+				}
+			},
+			mimeType,
+			quality,
+		);
+	});
 
 const drawOnCanvas = (
 	canvas: HTMLCanvasElement,
@@ -72,45 +143,6 @@ const drawOnCanvas = (
 	ctx.clearRect(0, 0, width, height);
 	ctx.drawImage(image, 0, 0, width, height);
 	return ctx;
-};
-
-const loadImageSource = async (
-	file: Blob,
-): Promise<{ source: CanvasImageSource; width: number; height: number; release: () => void }> => {
-	const objectUrl = URL.createObjectURL(file);
-
-	const revoke = () => URL.revokeObjectURL(objectUrl);
-
-	try {
-		if ("createImageBitmap" in window) {
-			const bitmap = await createImageBitmap(file);
-			return {
-				source: bitmap,
-				width: bitmap.width,
-				height: bitmap.height,
-				release: () => {
-					bitmap.close();
-					revoke();
-				},
-			};
-		}
-	} catch (error) {
-		console.warn("createImageBitmap failed, falling back to HTMLImageElement", error);
-	}
-
-	const img = await new Promise<HTMLImageElement>((resolve, reject) => {
-		const image = new Image();
-		image.onload = () => resolve(image);
-		image.onerror = reject;
-		image.src = objectUrl;
-	});
-
-	return {
-		source: img,
-		width: img.naturalWidth,
-		height: img.naturalHeight,
-		release: revoke,
-	};
 };
 
 const reduceColors = (source: Uint8ClampedArray, targetColors: number, preserveAlpha: boolean) => {
@@ -172,17 +204,62 @@ const convertPng = (imageData: ImageData, options: PngConversionOptions): Blob =
 	return new Blob([pngArrayBuffer], { type: "image/png" });
 };
 
+const loadImageSource = async (
+	file: File,
+): Promise<{ source: CanvasImageSource; width: number; height: number; release: () => void }> => {
+	try {
+		if ("createImageBitmap" in window) {
+			const bitmap = await createImageBitmap(file);
+			return {
+				source: bitmap,
+				width: bitmap.width,
+				height: bitmap.height,
+				release: () => {
+					bitmap.close();
+				},
+			};
+		}
+	} catch (error) {
+		console.warn("createImageBitmap failed, falling back to HTMLImageElement", error);
+	}
+
+	const objectUrl = URL.createObjectURL(file);
+	const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+		const image = new Image();
+		image.onload = () => resolve(image);
+		image.onerror = reject;
+		image.src = objectUrl;
+	});
+
+	return {
+		source: img,
+		width: img.naturalWidth,
+		height: img.naturalHeight,
+		release: () => URL.revokeObjectURL(objectUrl),
+	};
+};
+
 export const convertImage = async (
 	file: File,
 	config: ConversionConfig,
+	options?: ConvertImageOptions,
 ): Promise<ConversionResult> => {
 	const { source, width, height, release } = await loadImageSource(file);
 	try {
 		const canvas = document.createElement("canvas");
 		const ctx = drawOnCanvas(canvas, source, width, height);
+		if (width === 0 || height === 0) {
+			throw new Error("Conversion failed: decoded image has zero dimensions.");
+		}
 
 		if (config.format === "gif") {
-			const imageData = ctx.getImageData(0, 0, width, height);
+			let imageData: ImageData;
+			try {
+				imageData = ctx.getImageData(0, 0, width, height);
+			} catch (error) {
+				console.error("[convertImage] getImageData failed for gif", error);
+				throw error;
+			}
 			const blob = convertGifWithOptions(imageData, config.options);
 			return {
 				blob,
@@ -193,7 +270,13 @@ export const convertImage = async (
 		}
 
 		if (config.format === "png") {
-			const imageData = ctx.getImageData(0, 0, width, height);
+			let imageData: ImageData;
+			try {
+				imageData = ctx.getImageData(0, 0, width, height);
+			} catch (error) {
+				console.error("[convertImage] getImageData failed for png", error);
+				throw error;
+			}
 			const blob = convertPng(imageData, config.options);
 			return {
 				blob,
@@ -204,20 +287,20 @@ export const convertImage = async (
 		}
 
 		const mimeType = mimeMap[config.format];
-		const blob = await new Promise<Blob>((resolve, reject) => {
-			const qualityValue = qualityToFloat(config.quality);
-			canvas.toBlob(
-				(result) => {
-					if (result) {
-						resolve(result);
-					} else {
-						reject(new Error("Conversion failed."));
-					}
-				},
-				mimeType,
-				qualityValue,
+		const qualityValue = qualityToFloat(config.quality);
+
+		try {
+			applyBoost(ctx, width, height, options?.boost ?? defaultBoost);
+		} catch (error) {
+			console.warn("[convertImage] boostHdr failed, continuing without boost", error);
+		}
+
+		const blob = await encodeCanvas(canvas, mimeType, qualityValue);
+		if (!blob) {
+			throw new Error(
+				`Conversion failed: canvas encoding returned null for ${mimeType} even after dataURL fallback. The canvas was rendered in SDR; encoding in this format appears unsupported here.`,
 			);
-		});
+		}
 
 		return {
 			blob,
