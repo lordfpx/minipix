@@ -4,12 +4,14 @@ import { SimpleTitle } from "@/components/ui/SimpleTitle";
 import type {
 	GifConversionOptions,
 	OutputFormat,
+	OutputFormatSupport,
 	PngConversionOptions,
 } from "@/lib/imageConversion";
 import { formatOptions } from "@/types/conversion";
 
 interface GlobalQualityControlProps {
 	format: OutputFormat;
+	outputSupport: OutputFormatSupport;
 	onFormatChange: (format: OutputFormat) => void;
 	quality: number;
 	onQualityChange: (value: number) => void;
@@ -21,6 +23,7 @@ interface GlobalQualityControlProps {
 
 export const GlobalQualityControl = ({
 	format,
+	outputSupport,
 	onFormatChange,
 	quality,
 	onQualityChange,
@@ -211,11 +214,14 @@ export const GlobalQualityControl = ({
 						onChange={(event) => onFormatChange(event.target.value as OutputFormat)}
 						className="w-full border border-border bg-surface px-2 py-2 text-sm text-foreground transition"
 					>
-						{formatOptions.map((option) => (
-							<option key={option.value} value={option.value}>
-								{option.label}
-							</option>
-						))}
+						{formatOptions.map((option) => {
+							const supported = outputSupport[option.value];
+							return (
+								<option key={option.value} value={option.value} disabled={!supported}>
+									{option.label}
+								</option>
+							);
+						})}
 					</select>
 				</SimpleField>
 				{renderControls()}

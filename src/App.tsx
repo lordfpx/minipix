@@ -11,6 +11,7 @@ import { useConversionController } from "@/hooks/useConversionController";
 const App = () => {
 	const {
 		items,
+		outputSupport,
 		globalFormat,
 		globalQuality,
 		globalGifOptions,
@@ -75,6 +76,7 @@ const App = () => {
 
 						<GlobalQualityControl
 							format={globalFormat}
+							outputSupport={outputSupport}
 							onFormatChange={handleGlobalFormatChange}
 							quality={globalQuality}
 							onQualityChange={handleGlobalQualityChange}
@@ -96,6 +98,7 @@ const App = () => {
 				<section className="flex flex-col gap-4">
 					<ConversionList
 						items={items}
+						outputSupport={outputSupport}
 						globalFormat={globalFormat}
 						onFormatChange={handleFormatChange}
 						onQualityChange={handleQualityChange}

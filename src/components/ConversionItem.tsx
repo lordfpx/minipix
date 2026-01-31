@@ -11,12 +11,14 @@ import type {
 	BoostSettings,
 	GifConversionOptions,
 	OutputFormat,
+	OutputFormatSupport,
 	PngConversionOptions,
 } from "@/lib/imageConversion";
 import { type ConversionItem as ConversionItemType, formatOptions } from "@/types/conversion";
 
 interface ConversionItemProps {
 	item: ConversionItemType;
+	outputSupport: OutputFormatSupport;
 	globalFormat: OutputFormat;
 	onFormatChange: (id: string, format: OutputFormat) => void;
 	onQualityChange: (id: string, value: number) => void;
@@ -32,6 +34,7 @@ const formatLabelMap = new Map(formatOptions.map((option) => [option.value, opti
 
 const ConversionItemComponent = ({
 	item,
+	outputSupport,
 	globalFormat,
 	onFormatChange,
 	onQualityChange,
@@ -197,6 +200,7 @@ const ConversionItemComponent = ({
 
 					<FormatSelector
 						value={item.targetFormat}
+						outputSupport={outputSupport}
 						disabled={formatDisabled}
 						onFormatChange={handleFormatSelect}
 					/>
