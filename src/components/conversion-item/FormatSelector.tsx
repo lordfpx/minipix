@@ -13,22 +13,22 @@ interface FormatSelectorProps {
 
 export const FormatSelector = memo(
 	({ value, outputSupport, disabled, onFormatChange }: FormatSelectorProps) => (
-	<SimpleField label="Format">
-		<select
-			value={value}
-			onChange={onFormatChange}
-			disabled={disabled}
-			className="w-full border border-border bg-surface px-2 py-2 text-sm text-foreground transition disabled:opacity-60"
-		>
-			{formatOptions.map((option) => {
-				const supported = outputSupport[option.value];
-				return (
-					<option key={option.value} value={option.value} disabled={!supported}>
-						{option.label}
-					</option>
-				);
-			})}
-		</select>
-	</SimpleField>
+		<SimpleField label="Format">
+			<select
+				value={value}
+				onChange={onFormatChange}
+				disabled={disabled}
+				className="w-full border border-border bg-surface px-2 py-2 text-sm text-foreground transition disabled:opacity-60"
+			>
+				{formatOptions.map((option) => {
+					const supported = outputSupport[option.value];
+					return (
+						<option key={option.value} value={option.value} disabled={!supported}>
+							{option.label}
+						</option>
+					);
+				})}
+			</select>
+		</SimpleField>
 	),
 );

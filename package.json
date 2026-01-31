@@ -15,8 +15,6 @@
 	},
 	"dependencies": {
 		"@radix-ui/react-dialog": "^1.1.15",
-		"@tailwindcss/postcss": "^4.1.16",
-		"@tailwindcss/vite": "^4.1.16",
 		"clsx": "^2.1.1",
 		"file-saver": "^2.0.5",
 		"gifenc": "^1.0.2",
@@ -27,14 +25,17 @@
 		"upng-js": "^2.1.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.3.3",
+		"@biomejs/biome": "^2.3.13",
+		"@tailwindcss/postcss": "^4.1.16",
+		"@tailwindcss/vite": "^4.1.18",
 		"@types/file-saver": "^2.0.7",
 		"@types/node": "^24.7.2",
 		"@types/react": "^19.2.2",
 		"@types/react-dom": "^19.2.2",
-		"@vitejs/plugin-react": "^5.1.0",
+		"@vitejs/plugin-react-swc": "^4.2.2",
 		"gh-pages": "^6.0.0",
 		"typescript": "^5.9.3",
-		"vite": "^7.1.12"
+		"vite": "^7.3.1",
+		"vite-plugin-pwa": "^1.2.0"
 	}
 }
