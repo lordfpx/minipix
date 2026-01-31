@@ -3,12 +3,14 @@ import { SimpleBlock } from "@/components/ui/SimpleBlock";
 import type {
 	GifConversionOptions,
 	OutputFormat,
+	OutputFormatSupport,
 	PngConversionOptions,
 } from "@/lib/imageConversion";
 import type { ConversionItem as ConversionItemType } from "@/types/conversion";
 
 interface ConversionListProps {
 	items: ConversionItemType[];
+	outputSupport: OutputFormatSupport;
 	globalFormat: OutputFormat;
 	onFormatChange: (id: string, format: OutputFormat) => void;
 	onQualityChange: (id: string, value: number) => void;
@@ -22,6 +24,7 @@ interface ConversionListProps {
 
 export const ConversionList = ({
 	items,
+	outputSupport,
 	globalFormat,
 	onFormatChange,
 	onQualityChange,
@@ -48,6 +51,7 @@ export const ConversionList = ({
 				<ConversionItem
 					key={item.id}
 					item={item}
+					outputSupport={outputSupport}
 					globalFormat={globalFormat}
 					onFormatChange={onFormatChange}
 					onQualityChange={onQualityChange}

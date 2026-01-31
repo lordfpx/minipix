@@ -4,6 +4,7 @@ import { applyPaletteMapping, convertGifWithOptions, quantizePalette } from "@/l
 import { applyBackground, ensureColorCount, parseHexColor } from "@/lib/imageUtils";
 
 export type OutputFormat = "jpeg" | "png" | "webp" | "gif";
+export type OutputFormatSupport = Record<OutputFormat, boolean>;
 
 export type GifDitheringMode = "none" | "floyd-steinberg";
 
@@ -50,6 +51,33 @@ export interface ConversionResult {
 const mimeMap: Record<Exclude<OutputFormat, "gif" | "png">, string> = {
 	jpeg: "image/jpeg",
 	webp: "image/webp",
+};
+
+const canvasEncodeSupport = new Map<string, boolean>();
+const supportsCanvasEncoding = (mimeType: string) => {
+	if (typeof document === "undefined") return true;
+	const cached = canvasEncodeSupport.get(mimeType);
+	if (cached !== undefined) return cached;
+	const canvas = document.createElement("canvas");
+	const dataUrl = canvas.toDataURL(mimeType);
+	const supported = dataUrl.startsWith(`data:${mimeType}`);
+	canvasEncodeSupport.set(mimeType, supported);
+	return supported;
+};
+
+export const getOutputFormatSupport = (): OutputFormatSupport => ({
+	jpeg: supportsCanvasEncoding("image/jpeg"),
+	webp: supportsCanvasEncoding("image/webp"),
+	png: true,
+	gif: true,
+});
+
+export const getDefaultOutputFormat = (): OutputFormat => {
+	const support = getOutputFormatSupport();
+	if (support.webp) return "webp";
+	if (support.jpeg) return "jpeg";
+	if (support.png) return "png";
+	return "gif";
 };
 
 const supportedInputMimeTypes = [

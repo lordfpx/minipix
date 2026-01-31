@@ -6,8 +6,11 @@ import { detectHdrImage } from "@/lib/hdrDetection";
 import {
 	convertImage,
 	type GifConversionOptions,
+	getDefaultOutputFormat,
+	getOutputFormatSupport,
 	isSupportedInputFile,
 	type OutputFormat,
+	type OutputFormatSupport,
 	type PngConversionOptions,
 } from "@/lib/imageConversion";
 import { MAX_FILE_BYTES, MAX_TOTAL_BYTES } from "@/lib/uploadLimits";
@@ -53,6 +56,7 @@ const createProcessingUpdate = (
 
 interface UseConversionControllerResult {
 	items: ConversionItem[];
+	outputSupport: OutputFormatSupport;
 	globalFormat: OutputFormat;
 	globalQuality: number;
 	globalGifOptions: GifConversionOptions;
@@ -91,9 +95,12 @@ interface UseConversionControllerResult {
 }
 
 export const useConversionController = (): UseConversionControllerResult => {
+	const [outputSupport] = useState<OutputFormatSupport>(() => getOutputFormatSupport());
 	const [items, setItems] = useState<ConversionItem[]>([]);
-	const [globalFormat, setGlobalFormat] = useState<OutputFormat>("webp");
-	const [globalQuality, setGlobalQuality] = useState(defaultQuality("webp"));
+	const [globalFormat, setGlobalFormat] = useState<OutputFormat>(() => getDefaultOutputFormat());
+	const [globalQuality, setGlobalQuality] = useState(() =>
+		defaultQuality(getDefaultOutputFormat()),
+	);
 	const [globalGifOptions, setGlobalGifOptions] = useState(createDefaultGifOptions);
 	const [globalPngOptions, setGlobalPngOptions] = useState(createDefaultPngOptions);
 	const [isExporting, setIsExporting] = useState(false);
@@ -620,6 +627,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 
 	return {
 		items,
+		outputSupport,
 		globalFormat,
 		globalQuality,
 		globalGifOptions,
