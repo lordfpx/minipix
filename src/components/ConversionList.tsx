@@ -15,6 +15,7 @@ interface ConversionListProps {
 	onUseGlobalSettingsChange: (id: string, useGlobal: boolean) => void;
 	onGifOptionsChange: (id: string, options: Partial<GifConversionOptions>) => void;
 	onPngOptionsChange: (id: string, options: Partial<PngConversionOptions>) => void;
+	onBoostChange: (id: string, options: Partial<ConversionItemType["boost"]>) => void;
 	onSplitChange: (id: string, value: number) => void;
 	onRemove: (id: string) => void;
 }
@@ -27,6 +28,7 @@ export const ConversionList = ({
 	onUseGlobalSettingsChange,
 	onGifOptionsChange,
 	onPngOptionsChange,
+	onBoostChange,
 	onSplitChange,
 	onRemove,
 }: ConversionListProps) => {
@@ -52,6 +54,7 @@ export const ConversionList = ({
 					onUseGlobalSettingsChange={onUseGlobalSettingsChange}
 					onGifOptionsChange={onGifOptionsChange}
 					onPngOptionsChange={onPngOptionsChange}
+					onBoostChange={onBoostChange}
 					onSplitChange={onSplitChange}
 					onRemove={onRemove}
 				/>
