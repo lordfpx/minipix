@@ -1,9 +1,8 @@
-import { type ChangeEvent, memo, useCallback, useEffect, useMemo, useState } from "react";
+import { type ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ComparePreview } from "@/components/conversion-item/ComparePreview";
-import { FormatSelector } from "@/components/conversion-item/FormatSelector";
+import { FloatingSettingsPanel } from "@/components/conversion-item/FloatingSettingsPanel";
 import { ItemStats } from "@/components/conversion-item/ItemStats";
-import { SettingsControls } from "@/components/conversion-item/SettingsControls";
 import { SimpleBlock } from "@/components/ui/SimpleBlock";
 import { SimpleButton } from "@/components/ui/SimpleButton";
 import { SimpleTitle } from "@/components/ui/SimpleTitle";
@@ -146,6 +145,8 @@ const ConversionItemComponent = ({
 
 	const canDownload = Boolean(item.convertedBlob);
 
+	const previewContainerRef = useRef<HTMLDivElement>(null);
+
 	const handleDownload = useCallback(() => {
 		if (!item.convertedBlob) return;
 		const link = document.createElement("a");
@@ -160,14 +161,25 @@ const ConversionItemComponent = ({
 	return (
 		<SimpleBlock className="ConversionItem space-y-4">
 			<div className="mx-auto max-w-6xl flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-				<div className="space-y-1 flex gap-2 items-start w-full">
-					<div className="flex items-center gap-2">
-						<SimpleTitle as="h3">{item.file.name}</SimpleTitle>
-						{item.isHdr ? (
-							<span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
-								HDR
-							</span>
-						) : null}
+				<div className="flex gap-2 items-start w-full">
+					<div className="flex flex-col gap-1">
+						<div className="flex items-center gap-2">
+							<SimpleTitle as="h3">{item.file.name}</SimpleTitle>
+							{item.isHdr ? (
+								<span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+									HDR
+								</span>
+							) : null}
+						</div>
+						<label className="flex items-center gap-2 text-s text-muted-foreground bg-fuchsia-900 p-2 rounded-md self-start">
+							<input
+								type="checkbox"
+								checked={usesGlobalSettings}
+								onChange={handleUseGlobalToggle}
+								className="h-4 w-4 border border-border"
+							/>
+							<b>Use default settings</b> - {globalFormatLabel}
+						</label>
 					</div>
 
 					<div className="ml-auto flex gap-2">
@@ -186,39 +198,7 @@ const ConversionItemComponent = ({
 				</div>
 			</div>
 
-			<div className="mx-auto grid max-w-6xl grid-rows-2 md:grid-rows-1 md:grid-cols-2 gap-4">
-				<div className="flex flex-col gap-4">
-					<label className="flex items-center gap-2 text-xs text-muted-foreground">
-						<input
-							type="checkbox"
-							checked={usesGlobalSettings}
-							onChange={handleUseGlobalToggle}
-							className="h-4 w-4 border border-border"
-						/>
-						<b>Use default settings</b> - {globalFormatLabel}
-					</label>
-
-					<FormatSelector
-						value={item.targetFormat}
-						outputSupport={outputSupport}
-						disabled={formatDisabled}
-						onFormatChange={handleFormatSelect}
-					/>
-					<SettingsControls
-						targetFormat={item.targetFormat}
-						quality={qualityDraft}
-						qualityDisabled={qualityDisabled}
-						gifOptions={item.gifOptions}
-						pngOptions={item.pngOptions}
-						boost={item.boost}
-						settingsDisabled={settingsDisabled}
-						onQualityChange={handleQualityInputChange}
-						onGifOptionsChange={updateGifOptions}
-						onPngOptionsChange={updatePngOptions}
-						onBoostChange={updateBoost}
-					/>
-				</div>
-
+			<div className="mx-auto max-w-6xl">
 				<ItemStats
 					fileType={item.file.type || "Auto"}
 					formatLabel={formatLabel}
@@ -231,14 +211,35 @@ const ConversionItemComponent = ({
 				/>
 			</div>
 
-			<ComparePreview
-				originalUrl={item.originalUrl}
-				convertedUrl={previewUrl}
-				compareSplit={item.compareSplit}
-				status={item.status}
-				error={item.error}
-				onSplitChange={handleSplitSlider}
-			/>
+			<div ref={previewContainerRef} className="mx-auto relative">
+				<ComparePreview
+					originalUrl={item.originalUrl}
+					convertedUrl={previewUrl}
+					compareSplit={item.compareSplit}
+					status={item.status}
+					error={item.error}
+					onSplitChange={handleSplitSlider}
+				/>
+				{!usesGlobalSettings ? (
+					<FloatingSettingsPanel
+						containerRef={previewContainerRef}
+						targetFormat={item.targetFormat}
+						outputSupport={outputSupport}
+						formatDisabled={formatDisabled}
+						quality={qualityDraft}
+						qualityDisabled={qualityDisabled}
+						gifOptions={item.gifOptions}
+						pngOptions={item.pngOptions}
+						boost={item.boost}
+						settingsDisabled={settingsDisabled}
+						onFormatChange={handleFormatSelect}
+						onQualityChange={handleQualityInputChange}
+						onGifOptionsChange={updateGifOptions}
+						onPngOptionsChange={updatePngOptions}
+						onBoostChange={updateBoost}
+					/>
+				) : null}
+			</div>
 		</SimpleBlock>
 	);
 };
