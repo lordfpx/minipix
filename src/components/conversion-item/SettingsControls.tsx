@@ -47,7 +47,7 @@ export const SettingsControls = memo(
 					onClick={() => setShowBoost((prev) => !prev)}
 					className="rounded border border-border px-2 py-1 text-xs font-semibold text-foreground transition hover:bg-accent"
 				>
-					{showBoost ? "Hide image adjustments" : "Show image adjustments"}
+					{showBoost ? "🔼 image adjustments" : "🔽 image adjustments"}
 				</button>
 				{showBoost ? (
 					<BoostControls
