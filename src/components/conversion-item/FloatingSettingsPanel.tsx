@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import {
 	type ChangeEvent,
 	memo,
@@ -7,7 +8,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-
 import { FormatSelector } from "@/components/conversion-item/FormatSelector";
 import { SettingsControls } from "@/components/conversion-item/SettingsControls";
 import { SimpleTitle } from "@/components/ui/SimpleTitle";
@@ -119,16 +119,18 @@ export const FloatingSettingsPanel = memo(
 		return (
 			<div
 				ref={floatingPanelRef}
-				className="absolute z-40 w-72 max-w-[85vw] pointer-events-auto bg-slate-900 p-2 shadow-lg shadow-gray-950/50 rounded-lg flex flex-col gap-3"
+				className="absolute z-40 w-72 max-w-[85vw] pointer-events-auto bg-surface p-2 shadow-lg shadow-gray-950/50 rounded-lg flex flex-col gap-3"
 				style={{ left: panelPosition.x, top: panelPosition.y }}
 				onPointerMove={handlePanelPointerMove}
 				onPointerUp={handlePanelPointerUp}
 				onPointerCancel={handlePanelPointerUp}
 			>
 				<div
-					className={`flex items-center justify-between gap-2 text-sm ${
-						isDragging ? "cursor-grabbing" : "cursor-grab"
-					} select-none`}
+					className={clsx("flex items-center justify-between gap-2 text-sm select-none",
+						{
+						"cursor-grabbing": isDragging,
+						"cursor-grab": !isDragging,
+					})}
 					onPointerDown={handlePanelPointerDown}
 				>
 					<SimpleTitle as="h4" className="text-base">
@@ -139,9 +141,9 @@ export const FloatingSettingsPanel = memo(
 							type="button"
 							onClick={() => setIsCollapsed((current) => !current)}
 							onPointerDown={(event) => event.stopPropagation()}
-							className="rounded border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+							className="rounded border border-border px-2 py-1 text-xs text-muted-foreground transition-colors hover:border-accent cursor-pointer"
 						>
-							{isCollapsed ? "Show" : "Hide"}
+							{isCollapsed ? "Open" : "Close"}
 						</button>
 					</div>
 				</div>

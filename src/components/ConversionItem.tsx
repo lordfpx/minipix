@@ -171,7 +171,7 @@ const ConversionItemComponent = ({
 								</span>
 							) : null}
 						</div>
-						<label className="flex items-center gap-2 text-s text-muted-foreground bg-fuchsia-900 p-2 rounded-md self-start">
+						<label className="flex items-center gap-2 text-s text-accent-foreground bg-accent p-2 rounded-md self-start">
 							<input
 								type="checkbox"
 								checked={usesGlobalSettings}

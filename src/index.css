@@ -1,41 +1,42 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+@theme {
+	--color-background: var(--color-slate-100);
+	--color-surface: var(--color-white);
+	--color-surface-muted: var(--color-gray-50);
+	--color-surface-strong: var(--color-gray-200);
+	--color-border: var(--color-gray-300);
+	--color-border-muted: var(--color-gray-200);
+	--color-foreground: var(--color-slate-900);
+	--color-muted-foreground: var(--color-gray-600);
+	--color-subtle-foreground: var(--color-gray-500);
+	--color-accent: var(--color-blue-500);
+	--color-accent-foreground: var(--color-white);
+}
+
 @layer base {
 	:root {
 		color-scheme: light;
-		--color-background: 243 244 246;
-		--color-surface: 255 255 255;
-		--color-surface-muted: 249 250 251;
-		--color-surface-strong: 229 231 235;
-		--color-border: 209 213 219;
-		--color-border-muted: 229 231 235;
-		--color-foreground: 17 24 39;
-		--color-muted-foreground: 75 85 99;
-		--color-subtle-foreground: 107 114 128;
-		--color-accent: 59 130 246;
-		--color-accent-foreground: 255 255 255;
 	}
 
 	.dark {
 		color-scheme: dark;
-		--color-background: 3 7 18;
-		--color-surface: 17 24 39;
-		--color-surface-muted: 31 41 55;
-		--color-surface-strong: 55 65 81;
-		--color-border: 55 65 81;
-		--color-border-muted: 75 85 99;
-		--color-foreground: 241 245 249;
-		--color-muted-foreground: 209 213 219;
-		--color-subtle-foreground: 156 163 175;
-		--color-accent: 59 130 246;
-		--color-accent-foreground: 255 255 255;
+		--color-background: var(--color-slate-950);
+		--color-surface: var(--color-slate-900);
+		--color-surface-muted: var(--color-slate-800);
+		--color-surface-strong: var(--color-slate-700);
+		--color-border: var(--color-slate-700);
+		--color-border-muted: var(--color-slate-600);
+		--color-foreground: var(--color-slate-100);
+		--color-muted-foreground: var(--color-slate-100);
+		--color-subtle-foreground: var(--color-slate-400);
+		--color-accent: var(--color-blue-500);
+		--color-accent-foreground: var(--color-white);
 	}
 
 	body {
-		background-color: rgb(var(--color-background));
-		color: rgb(var(--color-foreground));
-		@apply antialiased;
+		@apply bg-background text-foreground antialiased;
 	}
 }
 
