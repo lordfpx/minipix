@@ -51,11 +51,11 @@ export const FileUpload = ({ onFilesSelected, errorMessage }: FileUploadProps) =
 					onChange={onInputChange}
 					className="hidden"
 				/>
-				<p className="text-sm text-muted-foreground">Drop your files here or click to browse.</p>
-				<p className="text-xs text-subtle-foreground">
-					Formats supportés : jpg, png, gif, svg, webp — {formatBytes(MAX_FILE_BYTES)} max par
+				<p className="text-sm text-muted-foreground font-bold">Drop files here, or click to browse.</p>
+				<p className="text-xs text-muted-foreground">
+					Allowed formats: jpg, png, gif, svg, webp <br />{formatBytes(MAX_FILE_BYTES)} max per
 					image,
-					{formatBytes(MAX_TOTAL_BYTES)} au total
+					total {formatBytes(MAX_TOTAL_BYTES)}
 				</p>
 			</label>
 			{errorMessage ? <p className="text-xs text-red-600">{errorMessage}</p> : null}
