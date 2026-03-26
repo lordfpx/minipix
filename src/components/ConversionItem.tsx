@@ -3,7 +3,7 @@ import { type ChangeEvent, memo, useCallback, useEffect, useMemo, useRef, useSta
 import { ComparePreview } from "@/components/conversion-item/ComparePreview";
 import { FloatingSettingsPanel } from "@/components/conversion-item/FloatingSettingsPanel";
 import { ItemStats } from "@/components/conversion-item/ItemStats";
-import { SimpleBlock } from "@/components/ui/SimpleBlock";
+import { PreviewToolbar } from "@/components/conversion-item/PreviewToolbar";
 import { SimpleButton } from "@/components/ui/SimpleButton";
 import { SimpleTitle } from "@/components/ui/SimpleTitle";
 import type {
@@ -21,6 +21,7 @@ import {
 
 interface ConversionItemProps {
 	item: ConversionItemType;
+	hasMultipleItems: boolean;
 	outputSupport: OutputFormatSupport;
 	globalFormat: OutputFormat;
 	onFormatChange: (id: string, format: OutputFormat) => void;
@@ -38,6 +39,7 @@ const formatLabelMap = new Map(formatOptions.map((option) => [option.value, opti
 
 const ConversionItemComponent = ({
 	item,
+	hasMultipleItems,
 	outputSupport,
 	globalFormat,
 	onFormatChange,
@@ -65,8 +67,10 @@ const ConversionItemComponent = ({
 		const mappedGlobalLabel = formatLabelMap.get(globalFormat) ?? globalFormat;
 		const converted = item.convertedBlob?.size ?? null;
 		const isQualityFormat = item.targetFormat === "jpeg" || item.targetFormat === "webp";
-		const globalSettings = item.usesGlobalFormat && (!isQualityFormat || item.usesGlobalQuality);
-		const qualityDisabled = isQualityFormat && (item.usesGlobalQuality || globalSettings);
+		const globalSettings =
+			hasMultipleItems && item.usesGlobalFormat && (!isQualityFormat || item.usesGlobalQuality);
+		const qualityDisabled =
+			hasMultipleItems && isQualityFormat && (item.usesGlobalQuality || globalSettings);
 		const delta = converted !== null ? item.originalSize - converted : null;
 		const gainRatio =
 			delta !== null && item.originalSize > 0 ? (delta / item.originalSize) * 100 : null;
@@ -81,7 +85,7 @@ const ConversionItemComponent = ({
 			delta,
 			gainRatio,
 		};
-	}, [globalFormat, item]);
+	}, [globalFormat, hasMultipleItems, item]);
 
 	const handleFormatSelect = useCallback(
 		(event: ChangeEvent<HTMLSelectElement>) =>
@@ -171,8 +175,8 @@ const ConversionItemComponent = ({
 
 	return (
 		<div className="ConversionItem border border-border bg-surface">
-			<div className="flex flex-col gap-4 p-4">
-				<div className="w-full mx-auto max-w-6xl flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+			<div className="flex flex-col gap-4 p-4 max-w-6xl mx-auto">
+				<div className="w-full mx-auto flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 					<div className="flex gap-2 items-start w-full">
 						<div className="flex flex-col gap-1">
 							<div className="flex items-center gap-2">
@@ -201,7 +205,7 @@ const ConversionItemComponent = ({
 					</div>
 				</div>
 
-				<div className="w-full mx-auto max-w-6xl">
+				<div className="w-full mx-auto">
 					<ItemStats
 						fileType={item.file.type || "Auto"}
 						formatLabel={formatLabel}
@@ -213,22 +217,29 @@ const ConversionItemComponent = ({
 						gainRatio={gainRatio}
 					/>
 				</div>
+
+				<PreviewToolbar
+					showGlobalSettingsToggle={hasMultipleItems}
+					usesGlobalSettings={usesGlobalSettings}
+					globalFormatLabel={globalFormatLabel}
+					previewMode={item.previewMode}
+					onUseGlobalToggle={handleUseGlobalToggle}
+					onPreviewModeChange={handlePreviewModeSelect}
+				/>
 			</div>
 
-			<div ref={previewContainerRef} className="mx-auto relative">
+			<div className="relative w-full flex-1 space-y-2">
 				<ComparePreview
+					ref={previewContainerRef}
 					originalUrl={item.originalUrl}
 					convertedUrl={previewUrl}
 					compareSplit={item.compareSplit}
 					previewMode={item.previewMode}
 					status={item.status}
 					error={item.error}
-					usesGlobalSettings={usesGlobalSettings}
-					globalFormatLabel={globalFormatLabel}
-					onUseGlobalToggle={handleUseGlobalToggle}
 					onSplitChange={handleSplitSlider}
-					onPreviewModeChange={handlePreviewModeSelect}
 				/>
+
 				{!usesGlobalSettings ? (
 					<FloatingSettingsPanel
 						containerRef={previewContainerRef}

@@ -40,6 +40,7 @@ export const FileUpload = ({ onFilesSelected, errorMessage }: FileUploadProps) =
 				onDrop={onDrop}
 				className={clsx(
 					"flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-border bg-surface p-4 lg:p-8 text-center text-foreground",
+					"hover:border-accent hover:bg-surface-muted transition-colors",
 					isDragging && "bg-surface-muted",
 				)}
 			>

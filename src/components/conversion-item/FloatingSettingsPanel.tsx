@@ -119,7 +119,7 @@ export const FloatingSettingsPanel = memo(
 		return (
 			<div
 				ref={floatingPanelRef}
-				className="absolute z-40 w-72 max-w-[85vw] pointer-events-auto bg-surface p-2 shadow-lg shadow-gray-950/50 rounded-lg flex flex-col gap-3"
+				className="FloatingSettingsPanel absolute z-40 w-72 max-w-[85vw] pointer-events-auto bg-surface p-2 shadow-lg shadow-gray-950/50 rounded-lg flex flex-col gap-3"
 				style={{ left: panelPosition.x, top: panelPosition.y }}
 				onPointerMove={handlePanelPointerMove}
 				onPointerUp={handlePanelPointerUp}

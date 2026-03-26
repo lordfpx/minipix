@@ -113,6 +113,25 @@ export const useConversionController = (): UseConversionControllerResult => {
 		itemsRef.current = items;
 	}, [items]);
 
+	useEffect(() => {
+		if (items.length > 1) return;
+		setItems((prev) => {
+			let changed = false;
+			const next = prev.map((item) => {
+				if (!item.usesGlobalFormat && !item.usesGlobalQuality) {
+					return item;
+				}
+				changed = true;
+				return {
+					...item,
+					usesGlobalFormat: false,
+					usesGlobalQuality: false,
+				};
+			});
+			return changed ? next : prev;
+		});
+	}, [items.length]);
+
 	const releaseResources = useCallback((item: ConversionItem) => {
 		URL.revokeObjectURL(item.originalUrl);
 		if (item.convertedUrl) {
@@ -282,7 +301,8 @@ export const useConversionController = (): UseConversionControllerResult => {
 				}
 				const originalUrl = URL.createObjectURL(file);
 				const targetFormat: OutputFormat = globalFormat;
-				const usesGlobalQuality = formatUsesQuality(targetFormat);
+				const useGlobalSettings = runningTotal > 0 || additions.length > 0;
+				const usesGlobalQuality = useGlobalSettings && formatUsesQuality(targetFormat);
 				const quality = usesGlobalQuality ? globalQuality : defaultQuality(targetFormat);
 				const job: ConversionItem = {
 					id: createId(),
@@ -292,7 +312,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 					targetFormat,
 					quality,
 					usesGlobalQuality,
-					usesGlobalFormat: true,
+					usesGlobalFormat: useGlobalSettings,
 					gifOptions: cloneGifOptions(globalGifOptions),
 					pngOptions: clonePngOptions(globalPngOptions),
 					boost: createDefaultBoost(),

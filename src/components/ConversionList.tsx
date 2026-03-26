@@ -10,6 +10,7 @@ import type { ConversionItem as ConversionItemType, PreviewMode } from "@/types/
 
 interface ConversionListProps {
 	items: ConversionItemType[];
+	hasMultipleItems: boolean;
 	outputSupport: OutputFormatSupport;
 	globalFormat: OutputFormat;
 	onFormatChange: (id: string, format: OutputFormat) => void;
@@ -25,6 +26,7 @@ interface ConversionListProps {
 
 export const ConversionList = ({
 	items,
+	hasMultipleItems,
 	outputSupport,
 	globalFormat,
 	onFormatChange,
@@ -38,13 +40,7 @@ export const ConversionList = ({
 	onRemove,
 }: ConversionListProps) => {
 	if (items.length === 0) {
-		return (
-			<SimpleBlock className="ConversionList mb-4">
-				<p className="text-sm text-muted-foreground text-center font-bold">
-					Upload an image to start the conversion.
-				</p>
-			</SimpleBlock>
-		);
+		return null;
 	}
 
 	return (
@@ -53,6 +49,7 @@ export const ConversionList = ({
 				<ConversionItem
 					key={item.id}
 					item={item}
+					hasMultipleItems={hasMultipleItems}
 					outputSupport={outputSupport}
 					globalFormat={globalFormat}
 					onFormatChange={onFormatChange}

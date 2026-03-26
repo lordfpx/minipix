@@ -49,6 +49,7 @@ const App = () => {
 	const fallbackDelta = fallbackOriginalTotal - fallbackConvertedTotal;
 	const fallbackRatio =
 		fallbackOriginalTotal > 0 ? (fallbackDelta / fallbackOriginalTotal) * 100 : 0;
+	const hasMultipleItems = items.length > 1;
 	const summaryData = averageReduction ?? {
 		originalTotal: fallbackOriginalTotal,
 		convertedTotal: fallbackConvertedTotal,
@@ -67,52 +68,65 @@ const App = () => {
 			/>
 
 			<main className="flex flex-1 flex-col gap-4 mb-6">
-				<div className="mx-auto max-w-5xl px-2 py-2 md:py-4 lg:py-6 w-full flex flex-col gap-2 md:gap-4 lg:gap-6">
+				<div className="mx-auto max-w-6xl px-2 py-2 md:py-4 lg:py-6 w-full flex flex-col gap-2 md:gap-4 lg:gap-6">
 					<p className="text-foreground text-center">
 						Convert images to different formats and compare the original and converted versions side
 						by side.
 					</p>
 
-					<div className="flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4 lg:gap-6">
+					<div
+						className={
+							hasMultipleItems
+								? "flex flex-col md:grid md:grid-cols-2 gap-2 md:gap-4 lg:gap-6"
+								: "flex flex-col gap-2 md:gap-4 lg:gap-6"
+						}
+					>
 						<FileUpload onFilesSelected={handleFiles} errorMessage={uploadError} />
 
-						<GlobalQualityControl
-							format={globalFormat}
-							outputSupport={outputSupport}
-							onFormatChange={handleGlobalFormatChange}
-							quality={globalQuality}
-							onQualityChange={handleGlobalQualityChange}
-							gifOptions={globalGifOptions}
-							pngOptions={globalPngOptions}
-							onGifOptionsChange={handleGlobalGifOptionsChange}
-							onPngOptionsChange={handleGlobalPngOptionsChange}
-						/>
+						{hasMultipleItems ? (
+							<GlobalQualityControl
+								format={globalFormat}
+								outputSupport={outputSupport}
+								onFormatChange={handleGlobalFormatChange}
+								quality={globalQuality}
+								onQualityChange={handleGlobalQualityChange}
+								gifOptions={globalGifOptions}
+								pngOptions={globalPngOptions}
+								onGifOptionsChange={handleGlobalGifOptionsChange}
+								onPngOptionsChange={handleGlobalPngOptionsChange}
+							/>
+						) : null}
 					</div>
 
-					<ConversionStats
-						originalTotal={summaryData.originalTotal}
-						convertedTotal={summaryData.convertedTotal}
-						delta={summaryData.delta}
-						ratio={summaryData.ratio}
-					/>
+					{hasMultipleItems ? (
+						<ConversionStats
+							originalTotal={summaryData.originalTotal}
+							convertedTotal={summaryData.convertedTotal}
+							delta={summaryData.delta}
+							ratio={summaryData.ratio}
+						/>
+					) : null}
 				</div>
 
-				<section className="flex flex-col gap-4">
-					<ConversionList
-						items={items}
-						outputSupport={outputSupport}
-						globalFormat={globalFormat}
-						onFormatChange={handleFormatChange}
-						onQualityChange={handleQualityChange}
-						onUseGlobalSettingsChange={handleUseGlobalSettingsChange}
-						onGifOptionsChange={handleGifOptionsChange}
-						onPngOptionsChange={handlePngOptionsChange}
-						onBoostChange={handleBoostChange}
-						onSplitChange={handleSplitChange}
-						onPreviewModeChange={handlePreviewModeChange}
-						onRemove={removeItem}
-					/>
-				</section>
+				{items.length > 0 && (
+					<section className="flex flex-col gap-4">
+						<ConversionList
+							items={items}
+							hasMultipleItems={hasMultipleItems}
+							outputSupport={outputSupport}
+							globalFormat={globalFormat}
+							onFormatChange={handleFormatChange}
+							onQualityChange={handleQualityChange}
+							onUseGlobalSettingsChange={handleUseGlobalSettingsChange}
+							onGifOptionsChange={handleGifOptionsChange}
+							onPngOptionsChange={handlePngOptionsChange}
+							onBoostChange={handleBoostChange}
+							onSplitChange={handleSplitChange}
+							onPreviewModeChange={handlePreviewModeChange}
+							onRemove={removeItem}
+						/>
+					</section>
+				)}
 			</main>
 
 			{/* <ColorPalettePreview /> */}
