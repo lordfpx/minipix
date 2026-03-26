@@ -298,7 +298,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 					boost: createDefaultBoost(),
 					status: "processing",
 					compareSplit: 50,
-					previewMode: "contain",
+					previewMode: "actual",
 					version: 1,
 				};
 				additions.push(job);

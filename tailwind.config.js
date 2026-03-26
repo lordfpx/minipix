@@ -19,6 +19,7 @@ export default {
 				accent: {
 					DEFAULT: withOpacityValue("--color-accent"),
 					foreground: withOpacityValue("--color-accent-foreground"),
+					border: withOpacityValue("--color-accent-border"),
 				},
 				brand: {
 					500: "#00E5A8",

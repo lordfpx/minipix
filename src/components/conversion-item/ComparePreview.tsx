@@ -24,6 +24,9 @@ interface ComparePreviewProps {
 	previewMode: PreviewMode;
 	status: ConversionItemType["status"];
 	error?: string;
+	usesGlobalSettings: boolean;
+	globalFormatLabel: string;
+	onUseGlobalToggle: (event: ChangeEvent<HTMLInputElement>) => void;
 	onSplitChange: (event: ChangeEvent<HTMLInputElement>) => void;
 	onPreviewModeChange: (mode: PreviewMode) => void;
 }
@@ -36,6 +39,9 @@ export const ComparePreview = memo(
 		previewMode,
 		status,
 		error,
+		usesGlobalSettings,
+		globalFormatLabel,
+		onUseGlobalToggle,
 		onSplitChange,
 		onPreviewModeChange,
 	}: ComparePreviewProps) => {
@@ -127,17 +133,29 @@ export const ComparePreview = memo(
 
 		return (
 			<div className="ComparePreview flex-1 space-y-2 max-sm:-ml-2 max-sm:-mr-2">
-				<div className="flex justify-center gap-2">
-					{previewModes.map((mode) => (
-						<SimpleButton
-							key={mode.value}
-							onClick={() => onPreviewModeChange(mode.value)}
-							variant={previewMode === mode.value ? "default" : "outline"}
-							className="px-2 py-1 text-xs shadow-md/50"
-						>
-							{mode.label}
-						</SimpleButton>
-					))}
+				<div className="flex justify-between gap-2 mx-auto max-w-6xl">
+					<label className="flex items-center gap-2 text-s border-2 border-accent p-2 rounded-md self-start">
+						<input
+							type="checkbox"
+							checked={usesGlobalSettings}
+							onChange={onUseGlobalToggle}
+							className="h-4 w-4 border border-border"
+						/>
+						<b>Use default settings</b> - {globalFormatLabel}
+					</label>
+
+					<div className="flex gap-3">
+						{previewModes.map((mode) => (
+							<SimpleButton
+								key={mode.value}
+								onClick={() => onPreviewModeChange(mode.value)}
+								variant={previewMode === mode.value ? "default" : "outline"}
+								className="px-2 py-1 text-xs"
+							>
+								{mode.label}
+							</SimpleButton>
+						))}
+					</div>
 				</div>
 
 				<div className="relative">
@@ -193,7 +211,7 @@ export const ComparePreview = memo(
 									/>
 
 									<div
-										className="pointer-events-none absolute z-20 w-px border-2 border-t-0 border-b-0 border-l-foreground border-r-background opacity-50 -translate-x-1/2"
+										className="pointer-events-none absolute z-20 w-px border-3 border-t-0 border-b-0 border-l-accent border-r-background opacity-70 -translate-x-1/2"
 										style={{
 											left: dividerLeft,
 											top: imageFrame.top,

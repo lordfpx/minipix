@@ -170,56 +170,49 @@ const ConversionItemComponent = ({
 	}, [item.convertedBlob, item.file.name, item.targetFormat]);
 
 	return (
-		<SimpleBlock className="ConversionItem space-y-4">
-			<div className="mx-auto max-w-6xl flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-				<div className="flex gap-2 items-start w-full">
-					<div className="flex flex-col gap-1">
-						<div className="flex items-center gap-2">
-							<SimpleTitle as="h3">{item.file.name}</SimpleTitle>
-							{item.isHdr ? (
-								<span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
-									HDR
-								</span>
-							) : null}
+		<div className="ConversionItem border border-border bg-surface">
+			<div className="flex flex-col gap-4 p-4">
+				<div className="w-full mx-auto max-w-6xl flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+					<div className="flex gap-2 items-start w-full">
+						<div className="flex flex-col gap-1">
+							<div className="flex items-center gap-2">
+								<SimpleTitle as="h3">{item.file.name}</SimpleTitle>
+								{item.isHdr ? (
+									<span className="inline-flex items-center rounded-full border border-amber-300 bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+										HDR
+									</span>
+								) : null}
+							</div>
 						</div>
-						<label className="flex items-center gap-2 text-s text-accent-foreground bg-accent p-2 rounded-md self-start">
-							<input
-								type="checkbox"
-								checked={usesGlobalSettings}
-								onChange={handleUseGlobalToggle}
-								className="h-4 w-4 border border-border"
-							/>
-							<b>Use default settings</b> - {globalFormatLabel}
-						</label>
-					</div>
 
-					<div className="ml-auto flex gap-2">
-						<SimpleButton
-							disabled={!canDownload}
-							onClick={handleDownload}
-							className={!canDownload ? "cursor-not-allowed opacity-50" : undefined}
-						>
-							Export
-						</SimpleButton>
-						<SimpleButton onClick={handleRemove} variant="outline">
-							&times;
-							<span className="sr-only">Remove</span>
-						</SimpleButton>
+						<div className="ml-auto flex gap-2">
+							<SimpleButton
+								disabled={!canDownload}
+								onClick={handleDownload}
+								className={!canDownload ? "cursor-not-allowed opacity-50" : undefined}
+							>
+								Export
+							</SimpleButton>
+							<SimpleButton onClick={handleRemove} variant="outline">
+								&times;
+								<span className="sr-only">Remove</span>
+							</SimpleButton>
+						</div>
 					</div>
 				</div>
-			</div>
 
-			<div className="mx-auto max-w-6xl">
-				<ItemStats
-					fileType={item.file.type || "Auto"}
-					formatLabel={formatLabel}
-					width={item.width}
-					height={item.height}
-					originalSize={item.originalSize}
-					convertedSize={convertedSize}
-					delta={delta}
-					gainRatio={gainRatio}
-				/>
+				<div className="w-full mx-auto max-w-6xl">
+					<ItemStats
+						fileType={item.file.type || "Auto"}
+						formatLabel={formatLabel}
+						width={item.width}
+						height={item.height}
+						originalSize={item.originalSize}
+						convertedSize={convertedSize}
+						delta={delta}
+						gainRatio={gainRatio}
+					/>
+				</div>
 			</div>
 
 			<div ref={previewContainerRef} className="mx-auto relative">
@@ -230,6 +223,9 @@ const ConversionItemComponent = ({
 					previewMode={item.previewMode}
 					status={item.status}
 					error={item.error}
+					usesGlobalSettings={usesGlobalSettings}
+					globalFormatLabel={globalFormatLabel}
+					onUseGlobalToggle={handleUseGlobalToggle}
 					onSplitChange={handleSplitSlider}
 					onPreviewModeChange={handlePreviewModeSelect}
 				/>
@@ -253,7 +249,7 @@ const ConversionItemComponent = ({
 					/>
 				) : null}
 			</div>
-		</SimpleBlock>
+		</div>
 	);
 };
 

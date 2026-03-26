@@ -29,9 +29,9 @@ export const ItemStats = memo(
 					<span>Source format</span>
 					<span className="font-bold text-foreground">{fileType}</span>
 				</div>
-				<div className="flex justify-between gap-4 md:gap-5">
-					<span>Target format</span>
-					<span className="font-bold text-foreground">{formatLabel}</span>
+				<div className="flex justify-between aligngap-4 md:gap-5">
+					<span>Source size</span>
+					<span className="font-bold text-foreground">{formatBytes(originalSize)}</span>
 				</div>
 				<div className="flex justify-between gap-4 md:gap-5">
 					<span>Dimensions</span>
@@ -43,11 +43,11 @@ export const ItemStats = memo(
 
 			<div className="flex flex-col gap-1 grow">
 				<div className="flex justify-between gap-4 md:gap-5">
-					<span>Original size</span>
-					<span className="font-bold text-foreground">{formatBytes(originalSize)}</span>
+					<span>Target format</span>
+					<span className="font-bold text-foreground">{formatLabel}</span>
 				</div>
 				<div className="flex justify-between gap-4 md:gap-5">
-					<span>Converted size</span>
+					<span>Target size</span>
 					<span className="font-bold text-foreground">
 						{convertedSize !== null ? formatBytes(convertedSize) : "—"}
 					</span>
@@ -56,7 +56,7 @@ export const ItemStats = memo(
 					<div className="flex justify-between gap-4 md:gap-5">
 						<span>Savings</span>
 						<span className="font-bold text-foreground">
-							{formatBytes(delta)} ({gainRatio.toFixed(1)}%)
+							-{formatBytes(delta)} ({gainRatio.toFixed(1)}%)
 						</span>
 					</div>
 				) : null}
