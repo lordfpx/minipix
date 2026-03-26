@@ -6,7 +6,7 @@ import type {
 	OutputFormatSupport,
 	PngConversionOptions,
 } from "@/lib/imageConversion";
-import type { ConversionItem as ConversionItemType } from "@/types/conversion";
+import type { ConversionItem as ConversionItemType, PreviewMode } from "@/types/conversion";
 
 interface ConversionListProps {
 	items: ConversionItemType[];
@@ -19,6 +19,7 @@ interface ConversionListProps {
 	onPngOptionsChange: (id: string, options: Partial<PngConversionOptions>) => void;
 	onBoostChange: (id: string, options: Partial<ConversionItemType["boost"]>) => void;
 	onSplitChange: (id: string, value: number) => void;
+	onPreviewModeChange: (id: string, mode: PreviewMode) => void;
 	onRemove: (id: string) => void;
 }
 
@@ -33,6 +34,7 @@ export const ConversionList = ({
 	onPngOptionsChange,
 	onBoostChange,
 	onSplitChange,
+	onPreviewModeChange,
 	onRemove,
 }: ConversionListProps) => {
 	if (items.length === 0) {
@@ -60,6 +62,7 @@ export const ConversionList = ({
 					onPngOptionsChange={onPngOptionsChange}
 					onBoostChange={onBoostChange}
 					onSplitChange={onSplitChange}
+					onPreviewModeChange={onPreviewModeChange}
 					onRemove={onRemove}
 				/>
 			))}

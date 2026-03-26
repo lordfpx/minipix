@@ -13,7 +13,11 @@ import type {
 	OutputFormatSupport,
 	PngConversionOptions,
 } from "@/lib/imageConversion";
-import { type ConversionItem as ConversionItemType, formatOptions } from "@/types/conversion";
+import {
+	type ConversionItem as ConversionItemType,
+	formatOptions,
+	type PreviewMode,
+} from "@/types/conversion";
 
 interface ConversionItemProps {
 	item: ConversionItemType;
@@ -26,6 +30,7 @@ interface ConversionItemProps {
 	onPngOptionsChange: (id: string, options: Partial<PngConversionOptions>) => void;
 	onBoostChange: (id: string, options: Partial<BoostSettings>) => void;
 	onSplitChange: (id: string, value: number) => void;
+	onPreviewModeChange: (id: string, mode: PreviewMode) => void;
 	onRemove: (id: string) => void;
 }
 
@@ -42,6 +47,7 @@ const ConversionItemComponent = ({
 	onPngOptionsChange,
 	onBoostChange,
 	onSplitChange,
+	onPreviewModeChange,
 	onRemove,
 }: ConversionItemProps) => {
 	const {
@@ -141,6 +147,11 @@ const ConversionItemComponent = ({
 		[item.id, onSplitChange],
 	);
 
+	const handlePreviewModeSelect = useCallback(
+		(mode: PreviewMode) => onPreviewModeChange(item.id, mode),
+		[item.id, onPreviewModeChange],
+	);
+
 	const handleRemove = useCallback(() => onRemove(item.id), [item.id, onRemove]);
 
 	const canDownload = Boolean(item.convertedBlob);
@@ -216,9 +227,11 @@ const ConversionItemComponent = ({
 					originalUrl={item.originalUrl}
 					convertedUrl={previewUrl}
 					compareSplit={item.compareSplit}
+					previewMode={item.previewMode}
 					status={item.status}
 					error={item.error}
 					onSplitChange={handleSplitSlider}
+					onPreviewModeChange={handlePreviewModeSelect}
 				/>
 				{!usesGlobalSettings ? (
 					<FloatingSettingsPanel

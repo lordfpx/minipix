@@ -5,6 +5,8 @@ import type {
 	PngConversionOptions,
 } from "@/lib/imageConversion";
 
+export type PreviewMode = "contain" | "actual" | "double";
+
 export interface ConversionItem {
 	id: string;
 	file: File;
@@ -22,6 +24,7 @@ export interface ConversionItem {
 	boost: BoostSettings;
 	error?: string;
 	compareSplit: number;
+	previewMode: PreviewMode;
 	width?: number;
 	height?: number;
 	isHdr?: boolean;

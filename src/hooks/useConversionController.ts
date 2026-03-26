@@ -21,6 +21,7 @@ import {
 	createDefaultGifOptions,
 	createDefaultPngOptions,
 	defaultQuality,
+	type PreviewMode,
 } from "@/types/conversion";
 
 const formatUsesQuality = (format: OutputFormat) => format === "jpeg" || format === "webp";
@@ -89,6 +90,7 @@ interface UseConversionControllerResult {
 	handleGlobalGifOptionsChange: (options: Partial<GifConversionOptions>) => void;
 	handleGlobalPngOptionsChange: (options: Partial<PngConversionOptions>) => void;
 	handleSplitChange: (id: string, value: number) => void;
+	handlePreviewModeChange: (id: string, mode: PreviewMode) => void;
 	removeItem: (id: string) => void;
 	clearAll: () => void;
 	downloadAll: () => Promise<void>;
@@ -296,6 +298,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 					boost: createDefaultBoost(),
 					status: "processing",
 					compareSplit: 50,
+					previewMode: "contain",
 					version: 1,
 				};
 				additions.push(job);
@@ -578,6 +581,19 @@ export const useConversionController = (): UseConversionControllerResult => {
 		);
 	}, []);
 
+	const handlePreviewModeChange = useCallback((id: string, mode: PreviewMode) => {
+		setItems((prev) =>
+			prev.map((item) =>
+				item.id === id
+					? {
+							...item,
+							previewMode: mode,
+						}
+					: item,
+			),
+		);
+	}, []);
+
 	const averageReduction = useMemo(() => {
 		const successful = items.filter((item) => item.status === "done" && item.convertedBlob);
 		if (successful.length === 0) return null;
@@ -650,6 +666,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 		handleGlobalGifOptionsChange,
 		handleGlobalPngOptionsChange,
 		handleSplitChange,
+		handlePreviewModeChange,
 		removeItem,
 		clearAll,
 		downloadAll,
