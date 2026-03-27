@@ -91,6 +91,7 @@ interface UseConversionControllerResult {
 	handleGlobalPngOptionsChange: (options: Partial<PngConversionOptions>) => void;
 	handleSplitChange: (id: string, value: number) => void;
 	handlePreviewModeChange: (id: string, mode: PreviewMode) => void;
+	handlePreviewCustomWidthChange: (id: string, width?: number) => void;
 	removeItem: (id: string) => void;
 	clearAll: () => void;
 	downloadAll: () => Promise<void>;
@@ -319,6 +320,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 					status: "processing",
 					compareSplit: 50,
 					previewMode: "actual",
+					previewCustomWidth: undefined,
 					version: 1,
 				};
 				additions.push(job);
@@ -608,6 +610,24 @@ export const useConversionController = (): UseConversionControllerResult => {
 					? {
 							...item,
 							previewMode: mode,
+							previewCustomWidth:
+								mode === "custom"
+									? (item.previewCustomWidth ?? item.width ?? 320)
+									: item.previewCustomWidth,
+						}
+					: item,
+			),
+		);
+	}, []);
+
+	const handlePreviewCustomWidthChange = useCallback((id: string, width?: number) => {
+		setItems((prev) =>
+			prev.map((item) =>
+				item.id === id
+					? {
+							...item,
+							previewMode: width ? "custom" : item.previewMode,
+							previewCustomWidth: width,
 						}
 					: item,
 			),
@@ -687,6 +707,7 @@ export const useConversionController = (): UseConversionControllerResult => {
 		handleGlobalPngOptionsChange,
 		handleSplitChange,
 		handlePreviewModeChange,
+		handlePreviewCustomWidthChange,
 		removeItem,
 		clearAll,
 		downloadAll,

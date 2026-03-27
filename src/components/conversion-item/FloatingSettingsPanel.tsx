@@ -126,8 +126,7 @@ export const FloatingSettingsPanel = memo(
 				onPointerCancel={handlePanelPointerUp}
 			>
 				<div
-					className={clsx("flex items-center justify-between gap-2 text-sm select-none",
-						{
+					className={clsx("flex items-center justify-between gap-2 text-sm select-none", {
 						"cursor-grabbing": isDragging,
 						"cursor-grab": !isDragging,
 					})}

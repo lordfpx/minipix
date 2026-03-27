@@ -1,5 +1,4 @@
 import { ConversionItem } from "@/components/ConversionItem";
-import { SimpleBlock } from "@/components/ui/SimpleBlock";
 import type {
 	GifConversionOptions,
 	OutputFormat,
@@ -21,6 +20,7 @@ interface ConversionListProps {
 	onBoostChange: (id: string, options: Partial<ConversionItemType["boost"]>) => void;
 	onSplitChange: (id: string, value: number) => void;
 	onPreviewModeChange: (id: string, mode: PreviewMode) => void;
+	onPreviewCustomWidthChange: (id: string, width?: number) => void;
 	onRemove: (id: string) => void;
 }
 
@@ -37,6 +37,7 @@ export const ConversionList = ({
 	onBoostChange,
 	onSplitChange,
 	onPreviewModeChange,
+	onPreviewCustomWidthChange,
 	onRemove,
 }: ConversionListProps) => {
 	if (items.length === 0) {
@@ -60,6 +61,7 @@ export const ConversionList = ({
 					onBoostChange={onBoostChange}
 					onSplitChange={onSplitChange}
 					onPreviewModeChange={onPreviewModeChange}
+					onPreviewCustomWidthChange={onPreviewCustomWidthChange}
 					onRemove={onRemove}
 				/>
 			))}

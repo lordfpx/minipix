@@ -52,11 +52,12 @@ export const FileUpload = ({ onFilesSelected, errorMessage }: FileUploadProps) =
 					onChange={onInputChange}
 					className="hidden"
 				/>
-				<p className="text-sm text-muted-foreground font-bold">Drop files here, or click to browse.</p>
+				<p className="text-sm text-muted-foreground font-bold">
+					Drop files here, or click to browse.
+				</p>
 				<p className="text-xs text-muted-foreground">
-					Allowed formats: jpg, png, gif, svg, webp <br />{formatBytes(MAX_FILE_BYTES)} max per
-					image,
-					total {formatBytes(MAX_TOTAL_BYTES)}
+					Allowed formats: jpg, png, gif, svg, webp <br />
+					{formatBytes(MAX_FILE_BYTES)} max per image, total {formatBytes(MAX_TOTAL_BYTES)}
 				</p>
 			</label>
 			{errorMessage ? <p className="text-xs text-red-600">{errorMessage}</p> : null}

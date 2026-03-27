@@ -6,6 +6,7 @@ import { ItemStats } from "@/components/conversion-item/ItemStats";
 import { PreviewToolbar } from "@/components/conversion-item/PreviewToolbar";
 import { SimpleButton } from "@/components/ui/SimpleButton";
 import { SimpleTitle } from "@/components/ui/SimpleTitle";
+import { stickyImageAnchorId } from "@/components/StickyImageNavigator";
 import type {
 	BoostSettings,
 	GifConversionOptions,
@@ -32,6 +33,7 @@ interface ConversionItemProps {
 	onBoostChange: (id: string, options: Partial<BoostSettings>) => void;
 	onSplitChange: (id: string, value: number) => void;
 	onPreviewModeChange: (id: string, mode: PreviewMode) => void;
+	onPreviewCustomWidthChange: (id: string, width?: number) => void;
 	onRemove: (id: string) => void;
 }
 
@@ -50,6 +52,7 @@ const ConversionItemComponent = ({
 	onBoostChange,
 	onSplitChange,
 	onPreviewModeChange,
+	onPreviewCustomWidthChange,
 	onRemove,
 }: ConversionItemProps) => {
 	const {
@@ -156,6 +159,11 @@ const ConversionItemComponent = ({
 		[item.id, onPreviewModeChange],
 	);
 
+	const handlePreviewCustomWidthChange = useCallback(
+		(width?: number) => onPreviewCustomWidthChange(item.id, width),
+		[item.id, onPreviewCustomWidthChange],
+	);
+
 	const handleRemove = useCallback(() => onRemove(item.id), [item.id, onRemove]);
 
 	const canDownload = Boolean(item.convertedBlob);
@@ -174,7 +182,11 @@ const ConversionItemComponent = ({
 	}, [item.convertedBlob, item.file.name, item.targetFormat]);
 
 	return (
-		<div className="ConversionItem border border-border bg-surface">
+		<div
+			id={stickyImageAnchorId(item.id)}
+			data-conversion-id={item.id}
+			className="ConversionItem scroll-mt-28 border border-border bg-surface"
+		>
 			<div className="flex flex-col gap-4 p-4 max-w-6xl mx-auto">
 				<div className="w-full mx-auto flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
 					<div className="flex gap-2 items-start w-full">
@@ -223,8 +235,10 @@ const ConversionItemComponent = ({
 					usesGlobalSettings={usesGlobalSettings}
 					globalFormatLabel={globalFormatLabel}
 					previewMode={item.previewMode}
+					previewCustomWidth={item.previewCustomWidth}
 					onUseGlobalToggle={handleUseGlobalToggle}
 					onPreviewModeChange={handlePreviewModeSelect}
+					onPreviewCustomWidthChange={handlePreviewCustomWidthChange}
 				/>
 			</div>
 
@@ -235,6 +249,7 @@ const ConversionItemComponent = ({
 					convertedUrl={previewUrl}
 					compareSplit={item.compareSplit}
 					previewMode={item.previewMode}
+					previewCustomWidth={item.previewCustomWidth}
 					status={item.status}
 					error={item.error}
 					onSplitChange={handleSplitSlider}

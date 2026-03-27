@@ -24,6 +24,7 @@ interface ComparePreviewProps {
 	convertedUrl?: string | null;
 	compareSplit: number;
 	previewMode: PreviewMode;
+	previewCustomWidth?: number;
 	status: ConversionItemType["status"];
 	error?: string;
 	onSplitChange: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -35,6 +36,7 @@ const ComparePreviewComponent = (
 		convertedUrl,
 		compareSplit,
 		previewMode,
+		previewCustomWidth,
 		status,
 		error,
 		onSplitChange,
@@ -101,20 +103,34 @@ const ComparePreviewComponent = (
 	};
 
 	const imageScale = previewMode === "double" ? 2 : 1;
+	const customDimensions =
+		previewMode === "custom" && naturalSize && previewCustomWidth && previewCustomWidth > 0
+			? {
+					width: previewCustomWidth,
+					height: Math.max(
+						1,
+						Math.round((naturalSize.height * previewCustomWidth) / naturalSize.width),
+					),
+				}
+			: null;
 	const zoomedImageStyle =
-		previewMode !== "contain" && naturalSize
-			? {
-					width: naturalSize.width * imageScale,
-					height: naturalSize.height * imageScale,
-				}
-			: undefined;
+		previewMode === "custom" && customDimensions
+			? customDimensions
+			: previewMode !== "contain" && naturalSize
+				? {
+						width: naturalSize.width * imageScale,
+						height: naturalSize.height * imageScale,
+					}
+				: undefined;
 	const contentStyle =
-		previewMode !== "contain" && naturalSize
-			? {
-					width: naturalSize.width * imageScale,
-					height: naturalSize.height * imageScale,
-				}
-			: undefined;
+		previewMode === "custom" && customDimensions
+			? customDimensions
+			: previewMode !== "contain" && naturalSize
+				? {
+						width: naturalSize.width * imageScale,
+						height: naturalSize.height * imageScale,
+					}
+				: undefined;
 
 	const imageClassName = clsx("block pixelated pointer-events-none", {
 		"h-full w-full object-contain": previewMode === "contain",
@@ -142,10 +158,13 @@ const ComparePreviewComponent = (
 				</div>
 
 				<div
-					className={clsx("flex aspect-square lg:aspect-video overflow-auto bg-surface u-checkboard", {
-						"items-center justify-center": previewMode === "contain",
-						"items-start justify-start": previewMode !== "contain",
-					})}
+					className={clsx(
+						"flex aspect-square lg:aspect-video overflow-auto bg-surface u-checkboard",
+						{
+							"items-center justify-center": previewMode === "contain",
+							"items-start justify-start": previewMode !== "contain",
+						},
+					)}
 				>
 					<div
 						ref={contentRef}
@@ -220,4 +239,6 @@ const ComparePreviewComponent = (
 
 ComparePreviewComponent.displayName = "ComparePreview";
 
-export const ComparePreview = memo(forwardRef<HTMLDivElement, ComparePreviewProps>(ComparePreviewComponent));
+export const ComparePreview = memo(
+	forwardRef<HTMLDivElement, ComparePreviewProps>(ComparePreviewComponent),
+);

@@ -5,6 +5,7 @@ import { FileUpload } from "@/components/FileUpload";
 import { Footer } from "@/components/Footer";
 import { GlobalQualityControl } from "@/components/GlobalQualityControl";
 import { Header } from "@/components/Header";
+import { StickyImageNavigator } from "@/components/StickyImageNavigator";
 import { useConversionController } from "@/hooks/useConversionController";
 
 // import { ColorPalettePreview } from "./components/dev/ColorPalettePreview";
@@ -36,6 +37,7 @@ const App = () => {
 		handleGlobalPngOptionsChange,
 		handleSplitChange,
 		handlePreviewModeChange,
+		handlePreviewCustomWidthChange,
 		removeItem,
 		clearAll,
 		downloadAll,
@@ -110,6 +112,8 @@ const App = () => {
 
 				{items.length > 0 && (
 					<section className="flex flex-col gap-4">
+						<StickyImageNavigator items={items} />
+
 						<ConversionList
 							items={items}
 							hasMultipleItems={hasMultipleItems}
@@ -123,6 +127,7 @@ const App = () => {
 							onBoostChange={handleBoostChange}
 							onSplitChange={handleSplitChange}
 							onPreviewModeChange={handlePreviewModeChange}
+							onPreviewCustomWidthChange={handlePreviewCustomWidthChange}
 							onRemove={removeItem}
 						/>
 					</section>
