@@ -74,10 +74,10 @@ const StickyImageNavigatorComponent = ({ items }: StickyImageNavigatorProps) => 
 	}
 
 	return (
-		<div className="sticky top-2 z-40 w-fit mx-auto">
+		<div className="StickyImageNavigatorComponent sticky top-2 z-40 w-fit mx-auto">
 			<div className="mx-auto max-w-6xl px-2">
 				<div className="border border-border bg-surface/95 p-2 backdrop-blur-xs">
-					<div className="flex gap-2 overflow-x-auto pb-1">
+					<div className="flex gap-2 overflow-x-auto">
 						{entries.map((item) => (
 							<button
 								key={item.id}
